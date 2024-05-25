@@ -4,8 +4,6 @@ RUN pip install flask
 
 WORKDIR /code
 
-COPY . .
-
-RUN mkdir -p data/
+#COPY . .
 
 CMD ["python", "./main.py"]
