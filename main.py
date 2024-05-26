@@ -6,10 +6,11 @@ logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__, static_url_path="", static_folder="static")
 
+DATA_PATH = "/data"
 
 @app.route("/data/<file>", methods=["GET"])
 def data(file):
-    path = os.path.join("data", file)
+    path = os.path.join(DATA_PATH, file)
     return send_file(path)
 
 # Could have used jinja, but this is easier for now
@@ -28,7 +29,7 @@ def list_files():
     <h1>{title}</h1>
     """
 
-    for x in os.listdir("data"):
+    for x in os.listdir(DATA_PATH):
         url = url_for("data", file=x, _external=True)
         html = html + f"<a href={url}>{x}</a><br><br>"
 
@@ -85,7 +86,7 @@ def upload_post():
     
     if file:
         filename = secure_filename(file.filename)
-        file.save(os.path.join("data", filename))
+        file.save(os.path.join(DATA_PATH, filename))
 
         url = url_for("data", file=filename, _external=True)
         
@@ -95,4 +96,7 @@ def upload_post():
         return html
 
 if __name__ == "__main__":
+    if not os.path.exists(DATA_PATH):
+       os.makedirs(DATA_PATH)
+
     app.run(debug=True, host="0.0.0.0", port=5000)
